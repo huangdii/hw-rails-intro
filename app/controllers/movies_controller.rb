@@ -9,7 +9,7 @@ class MoviesController < ApplicationController
     def index
       @movies = Movie.all
       
-      sort = params[:sort] || session[:sort]
+      sort = params[:sort]
       case sort
         when 'title'
           ordering, @title_header = {:title => :asc}, 'hilite'
