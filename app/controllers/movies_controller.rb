@@ -7,6 +7,8 @@ class MoviesController < ApplicationController
     end
   
     def index
+      @movies = Movie.all
+      
       sort = params[:sort] || session[:sort]
       case sort
         when 'title'
