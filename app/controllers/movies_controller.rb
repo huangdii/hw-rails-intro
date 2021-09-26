@@ -7,7 +7,7 @@ class MoviesController < ApplicationController
     end
   
     def index
-      sort = params[:sort]
+      sort = params[:sort] || session[:sort]
       case sort
         when 'title'
           ordering, @title_header = {:title => :asc}, 'hilite'
@@ -15,11 +15,18 @@ class MoviesController < ApplicationController
           ordering, @date_header = {:release_date => :asc}, 'hilite'
       end
       @all_ratings = Movie.all_ratings
-      @checked_ratings = params[:ratings]
+      @checked_ratings = params[:ratings] || session[:ratings]
       if @checked_ratings == nil
         ratings = Movie.all_ratings
+        session[:ratings] = Movie.all_ratings
       else
         ratings = @checked_ratings.keys
+        if (session[:sort] != params[:sort]) || (session[:ratings] != params[:ratings])
+          session[:sort] = sort
+          session[:ratings] = @checked_ratings
+          redirect_to :sort => sort, :ratings => @checked_ratings 
+          return
+        end
       end
       @movies = Movie.order(ordering).where(rating: ratings)
       @check = ratings
